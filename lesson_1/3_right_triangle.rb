@@ -1,8 +1,7 @@
 sides = []
-3.times do |i| 
+3.times do
   puts "Enter triangle`s side length: "
-  sides[i] = gets.chomp.to_f
-  i += 1
+  sides << gets.chomp.to_f
 end
 sides.sort!
 

@@ -5,11 +5,11 @@ b = gets.chomp.to_f
 puts "Enter coefficient c: "
 c = gets.chomp.to_f
 
-
 discriminant = b ** 2 - 4 * a * c
 if discriminant > 0
-  root_1 = (-b + Math.sqrt(discriminant)) / (2 * a)
-  root_2 = (-b - Math.sqrt(discriminant)) / (2 * a)
+  discriminant_root = Math.sqrt(discriminant);
+  root_1 = (-b + discriminant_root) / (2 * a)
+  root_2 = (-b - discriminant_root) / (2 * a)
   puts "Discriminant: #{discriminant}, first root: #{root_1}, second root: #{root_2}"
 elsif discriminant < 0
   puts "No roots"
