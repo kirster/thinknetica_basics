@@ -10,7 +10,7 @@ month_number = gets.chomp.to_i
 puts "Enter year:"
 year = gets.chomp.to_i
 
-months[:february] = 29 if year % 4 == 0 || year % 100 != 0 || year % 400 == 0
+months[:february] = 29 if (year % 4 == 0 && year % 100 != 0) || year % 400 == 0
 months = months.to_a
 
 date = 0
