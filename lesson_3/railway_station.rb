@@ -11,57 +11,37 @@ class Station
   end
 
   def display_trains
-    if @trains.any?
-      output = "Station #{self.title}: \n"
-      @trains.each { |train| output += "\t Train #{train.train_id} \n" }
-      output
-    else
-      "No trains on station #{self.title}"
-    end
+    @trains.any? ? @trains : "No trains on station #{self.title}"
   end
 
-  def display_trains_by_type
-    if @trains.any?
-      passenger_trains = 0
-      cargo_trains = 0
-      @trains.each { |train| if train.type == "passenger" then passenger_trains += 1 else cargo_trains += 1 end}
-      "Station #{self.title}: #{passenger_trains} passenger train(s) and #{cargo_trains} cargo train(s)"
-    else
-      "No trains on station #{self.title}"
-    end
+  def display_trains_by_type(type)
+    @trains.select { |train| train.type == type }.size if @trains.any?
   end
 
   def release_train(train)
-    if @trains.include?(train)
-      @trains.delete(train)
-      "Train #{train.train_id} is leaving station #{self.title}"
-    else
-      "No such train on station #{self.title}"
-    end  
+    @trains.include?(train) ? @trains.delete(train) : "No such train on station #{self.title}" 
   end
 
 end
 
 
 class Route
-  attr_reader :route
+  attr_reader :stations
 
   def initialize(initial_station, final_station)
-    @route = [initial_station, final_station]
+    @stations = [initial_station, final_station]
   end
 
   def add_station(station)
-    @route.insert(1, station)
+    @stations.insert(1, station)
   end
 
   def delete_station(station)
-    @route.delete(station)
+    @stations.delete(station)
   end
 
   def display_stations
-    output = "The entire route is: \n"
-    @route.each { |station| output += "#{station.title} \n" }
-    output
+    @stations
   end
   
 end
@@ -78,7 +58,7 @@ class Train
   end
 
   def display_current_speed
-    "Current speed: #{@speed}"
+    @speed
   end
 
   def increase_speed(delta=10)
@@ -90,41 +70,54 @@ class Train
   end
 
   def display_number_of_wagons
-    "This train has #{@number_of_wagons} wagons"
+    @number_of_wagons
   end
 
-  def add_or_remove_wagons(add=true)
-    if @speed == 0
-      add ? @number_of_wagons += 1 : @number_of_wagons -= 1
+  def add_wagon
+    @speed == 0 ? @number_of_wagons += 1 : "Impossible to make this operation, while train is moving"  
+  end
+
+  def remove_wagon
+    @speed == 0 && @number_of_wagons > 0 ? @number_of_wagons -= 1 : 
+                                        "Impossible to make this operation, while train is moving/Train has no wagons"
+  end
+
+  def get_route(stations)
+    @route = stations
+    @current_station_index = 0
+    current_station.receive_train(self)
+  end
+
+  def move_forward
+    unless @current_station_index == @route.stations.size - 1
+      current_station.release_train(self)
+      @current_station_index += 1
+      current_station.receive_train(self)
     else
-      "Impossible to make this operation, while train is moving"  
+      "Can`t go to the next station"
     end
   end
 
-  def get_route(route)
-    @path = route
-    @current_station_index = 0
-    @current_station = @path.route[@current_station_index]
-  end
-
-  def move(forward=true)
-    if forward
-      @current_station_index != @path.route.size - 1 ? @current_station_index += 1 : "Can`t go to the next station"
+  def move_backwards
+    unless @current_station_index == 0
+      current_station.release_train(self)
+      @current_station_index -= 1
+      current_station.receive_train(self)
     else
-      @current_station_index != 0 ? @current_station_index -= 1 : "Can`t go to the previous station"
-    end 
+      "Can`t go to the previous station"
+    end
   end
 
-  def display_current_station
-    "Current station: #{@path.route[@current_station_index].title}"
+  def current_station
+    @route.stations[@current_station_index]
   end
 
-  def display_next_station
-    @current_station_index == @path.route.size - 1 ? "Train is on the final station" : "Next station: #{@path.route[@current_station_index + 1].title}"
+  def next_station
+    @current_station_index == @route.stations.size - 1 ? "Train is on the final station" : @route.stations[@current_station_index + 1]
   end
 
-  def display_previous_station
-    @current_station_index == 0 ? "Train is just on the first station" : "Previous station: #{@path.route[@current_station_index - 1].title}"
+  def previous_station
+    @current_station_index == 0 ? "Train is just on the first station" : @route.stations[@current_station_index - 1]
   end
 
 end
