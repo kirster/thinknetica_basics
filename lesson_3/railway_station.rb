@@ -10,11 +10,11 @@ class Station
     @trains << train
   end
 
-  def display_trains
+  def trains
     @trains.any? ? @trains : "No trains on station #{self.title}"
   end
 
-  def display_trains_by_type(type)
+  def trains_by_type(type)
     @trains.select { |train| train.type == type }.size if @trains.any?
   end
 
@@ -39,16 +39,12 @@ class Route
   def delete_station(station)
     @stations.delete(station)
   end
-
-  def display_stations
-    @stations
-  end
   
 end
 
 
 class Train
-  attr_reader :train_id, :type 
+  attr_reader :train_id, :type, :number_of_wagons, :speed 
 
   def initialize(train_id, type, number_of_wagons=0)
     @train_id = train_id
@@ -57,20 +53,12 @@ class Train
     @speed = 0
   end
 
-  def display_current_speed
-    @speed
-  end
-
   def increase_speed(delta=10)
     @speed += delta
   end
 
   def stop
     @speed = 0
-  end
-
-  def display_number_of_wagons
-    @number_of_wagons
   end
 
   def add_wagon
@@ -113,7 +101,8 @@ class Train
   end
 
   def next_station
-    @current_station_index == @route.stations.size - 1 ? "Train is on the final station" : @route.stations[@current_station_index + 1]
+    @current_station_index == @route.stations.size - 1 ? "Train is on the final station" : 
+                                                        @route.stations[@current_station_index + 1]
   end
 
   def previous_station
