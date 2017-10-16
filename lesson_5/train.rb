@@ -7,13 +7,13 @@ class Train
   include InstanceCounter
 
   attr_reader :train_id, :wagons, :speed
-  @@trains = [] 
+  @@trains = {} 
 
   def initialize(train_id)
     @train_id = train_id
     @wagons = []
     @speed = 0
-    @@trains << self
+    @@trains[train_id] = self
     register_instance
   end
 
@@ -24,7 +24,7 @@ class Train
     end
 
     def find(train_id)
-      @@trains.select { |train| train.train_id == train_id }.first
+      @@trains[train_id]
     end
 
   end

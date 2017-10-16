@@ -6,9 +6,10 @@ module InstanceCounter
   end
 
   module ClassMethods
-    @amount = 0
+    attr_reader :amount
 
-    def amount
+    def increase_amount
+      @amount ||= 0
       @amount += 1
     end
 
@@ -17,7 +18,7 @@ module InstanceCounter
   module InstanceMethods
     protected
       def register_instance
-        self.class.amount   
+        self.class.increase_amount   
       end
   end
   

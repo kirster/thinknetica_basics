@@ -94,7 +94,7 @@ class Main
   end
 
   def trains
-    Train.trains.each { |train| puts train.train_id }
+    Train.trains.keys.each { |train_id| puts train_id }
   end
 
   def trains_by_station
@@ -167,7 +167,7 @@ class Main
     def select_train
       puts "Enter train id: "
       train_id = gets.chomp
-      Train.trains.select { |train| train.train_id == train_id }[0]
+      Train.find(train_id)
     end
  
 end
