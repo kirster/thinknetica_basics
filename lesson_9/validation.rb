@@ -9,8 +9,7 @@ module Validation
 
     def validate(var_name, validation_type, option = nil)
       @rules ||= []
-      @rules << { var_properties: { var_name: var_name, 
-                                    var_value: instance_variable_get("@#{var_name}") },
+      @rules << { var_properties: { var_name: var_name }, 
                   validation_type: validation_type.to_sym,
                   option: option }
     end
@@ -25,6 +24,8 @@ module Validation
 
     def validate!
       self.class.rules.each do |rule|
+        var_value = instance_variable_get("@#{rule.[:var_properties][:var_name]}")
+        rule[:var_properties][:var_value] = var_value
         send rule[:validation_type], rule[:var_properties], rule[:option]
       end
       true
