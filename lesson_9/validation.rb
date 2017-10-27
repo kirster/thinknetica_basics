@@ -5,14 +5,14 @@ module Validation
   end
 
   module ClassMethods
-    def validate(var_name, validation_type, option = nil)
-      @rules = {}
-      @rules[:var_name] = var_name.to_sym
-      @rules[:validation_type] = validation_type.to_sym
-      @rules[:option] = option
-    end
+    attr_reader :rules
 
-    define_method('rules') { instance_variable_get('@rules') }
+    def validate(var_name, validation_type, option = nil)
+      @rules = []
+      @rules << { var_name: var_name,
+                  validation_type: validation_type.to_sym,
+                  option: option }
+    end
   end
 
   module InstanceMethods
@@ -23,8 +23,9 @@ module Validation
     end
 
     def validate!
-      rules = self.class.rules
-      send rules[:validation_type], rules[:var_name], rules[:option]
+      self.class.rules.each do |rule|
+        send rule[:validation_type], rule[:var_name], rule[:option]
+      end
       true
     end
 
